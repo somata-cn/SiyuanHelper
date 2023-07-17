@@ -1,0 +1,19 @@
+
+[project]
+name = "SiyuanHelper"
+version = "0.1.0"
+description = "Easily upload your Markdown-type document to the remote Siyuan host."
+authors = [
+    {name = "somata", email = "somata@foxmail.com"},
+]
+dependencies = [
+    "requests>=2.31.0",
+    "loguru>=0.7.0",
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "Apache 2.0"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
