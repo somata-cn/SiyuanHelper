@@ -106,12 +106,11 @@ class Siyuan:
 
     def create_markdown_document(self, notebook: str, doc_name: str, markdown: str) -> str:
         """直接在思源笔记根目录创建 Markdown 格式的文档
-        要先把 Markdown 中的图像上传至 assets 目录下
         注: 重复上传不会覆盖原有文档
 
-        :param noteboo: 笔记本 ID
+        :param notebook: 笔记本 ID
         :param doc_name: 文档名称(实际上是文档路径)
-        :param markdown: Markdown格式的文档
+        :param markdown: Markdown格式的文档(要先把 Markdown 中的图像上传至 assets 目录下)
         :returns: 新建文档的ID
         """
         request_url = urljoin(self.url, "/api/filetree/createDocWithMd")
