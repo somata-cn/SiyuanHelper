@@ -48,15 +48,20 @@ def main():
 
     # 查找markdown中的本地图像, 上传, 替换路径
     img_pattern = re.compile(r"!\[(.*?)\]\((.*?)\)")
+    net_pattern = re.compile(r"^https?:\/\/")
     for match in img_pattern.finditer(markdown):
         matched_str = match.group(0)
         desc, path = match.group(1, 2)
+        # 判断资源是否为本地路径
+        if net_pattern.match(path):
+            continue
         path = normcase(pathjoin(dirname(makrdown_file), path))
 
         server_path = siyuan.upload_asset(path)
         logger.info(f"upload file {path} success")
 
         markdown = markdown.replace(matched_str, f"![{desc}]({server_path})")
+
     # 上传Markdown
     document_name = basename(makrdown_file)
     document_id = siyuan.create_markdown_document(
