@@ -51,8 +51,7 @@ class Siyuan:
         """上传资源到 `/data/assets` 目录
 
         :param file: 本地资源路径，需要传入绝对路径。
-        :type file: str
-        :rtype: str
+        :returns: 服务端文件资源路径
         """
         request_url = urljoin(self.url, "/api/asset/upload")
         logger.debug(f"request url {request_url}")
@@ -91,8 +90,7 @@ class Siyuan:
     def remove_unused_assets(self) -> list:
         """删除所有未使用资源
 
-        :returns: 已删除的文件
-        :rtype: list
+        :returns: 已删除的文件列表
         """
         request_url = urljoin(self.url, "/api/asset/removeUnusedAssets")
         logger.debug(f"request url {request_url}")
@@ -107,7 +105,7 @@ class Siyuan:
         return response['data']['paths']
 
     def create_markdown_document(self, notebook: str, doc_name: str, markdown: str) -> str:
-        """直接在思源笔记根目录创建 Markdown 格式的文档,
+        """直接在思源笔记根目录创建 Markdown 格式的文档
         要先把 Markdown 中的图像上传至 assets 目录下
         注: 重复上传不会覆盖原有文档
 
