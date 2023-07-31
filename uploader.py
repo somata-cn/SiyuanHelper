@@ -47,13 +47,15 @@ def main():
         markdown = file_pointer.read()
 
     # 查找markdown中的本地图像, 上传, 替换路径
-    img_pattern = re.compile(r"!\[(.*?)\]\((.*?)\)")
+    img_pattern = re.compile(r"!\[(.*?)\]\((.*)\)")
     net_pattern = re.compile(r"^https?:\/\/")
     for match in img_pattern.finditer(markdown):
         matched_str = match.group(0)
         desc, path = match.group(1, 2)
+        logger.debug(f"match resource {path}")
         # 判断资源是否为本地路径
         if net_pattern.match(path):
+            logger.debug(f"network resource {path}")
             continue
         path = normcase(pathjoin(dirname(makrdown_file), path))
 
