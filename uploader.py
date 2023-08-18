@@ -2,11 +2,11 @@
 
 """思源助手主程序, 用于将本地Markdown上传至思源笔记本。
 
-file: /main.py
+file: /uploader.py
 author: somata
 e-mail: somata@foxmail.com
 license: Apache 2.0
-date: 2023-7-17
+date: 2023-7-31
 """
 
 
@@ -17,12 +17,13 @@ from sys import argv, stderr
 from sys import exit as broken
 from loguru import logger
 from api import Siyuan
-from config import URL, TOKEN
+from config import URL, TOKEN, VERIFY
 
 logger.remove()
 logger.add(stderr, level="INFO")
 
 
+@logger.catch
 def main():
     """主函数
     """
@@ -32,7 +33,7 @@ def main():
 
     makrdown_file = argv[1]
 
-    siyuan = Siyuan(URL, TOKEN)
+    siyuan = Siyuan(URL, TOKEN, VERIFY)
 
     # 选择笔记本
     notebooks = siyuan.ls_notebooks()

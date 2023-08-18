@@ -12,7 +12,7 @@ date: 2023-7-17
 from urllib.parse import urljoin
 import requests
 from loguru import logger
-from errors import CodeError
+from errors import CodeError, StatusError
 
 
 class Siyuan:
@@ -20,9 +20,10 @@ class Siyuan:
     仅实现了思源助手相关 API, 其余未使用到的暂未编写
     """
 
-    def __init__(self, url: str, token: str):
+    def __init__(self, url: str, token: str, verify: bool = True):
         self.session = requests.Session()
         self.session.headers["Authorization"] = f"Token {token}"
+        self.session.verify = verify
         self.url = url
 
     def ls_notebooks(self) -> list:
@@ -35,6 +36,9 @@ class Siyuan:
         logger.debug(f"request url {request_url}")
 
         response = self.session.post(request_url)
+        if response.status_code != 200:
+            raise StatusError(response.status_code)
+
         response = response.json()
         logger.debug(response)
 
@@ -60,6 +64,9 @@ class Siyuan:
         data = {'assetsDirPath': '/assets/'}
 
         response = self.session.post(request_url, data=data, files=files)
+        if response.status_code != 200:
+            raise StatusError(response.status_code)
+
         response = response.json()
         logger.debug(response)
 
@@ -79,6 +86,9 @@ class Siyuan:
         logger.debug(f"request url {request_url}")
 
         response = self.session.post(request_url)
+        if response.status_code != 200:
+            raise StatusError(response.status_code)
+
         response = response.json()
         logger.debug(response)
 
@@ -96,6 +106,9 @@ class Siyuan:
         logger.debug(f"request url {request_url}")
 
         response = self.session.post(request_url)
+        if response.status_code != 200:
+            raise StatusError(response.status_code)
+
         response = response.json()
         logger.debug(response)
 
@@ -123,6 +136,9 @@ class Siyuan:
         }
 
         response = self.session.post(request_url, json=data)
+        if response.status_code != 200:
+            raise StatusError(response.status_code)
+
         response = response.json()
         logger.debug(response)
 

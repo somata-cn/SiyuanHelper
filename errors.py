@@ -17,3 +17,14 @@ class CodeError(Exception):
 
     def __str__(self):
         return repr(self.value)
+
+
+class StatusError(Exception):
+    """思源笔记 状态码 返回类型错误
+    """
+
+    def __init__(self, status: int):
+        self.status = status
+
+    def __str__(self):
+        return f"unexcept status with {self.status}"

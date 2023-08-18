@@ -19,7 +19,7 @@
    ```
 3. 运行程序
    ```shell
-   python main.py "文件路径"
+   python uploader.py "文件路径"
    ```
 
 
@@ -27,5 +27,5 @@
 ```
 SiyuanHelper
 ├─api.py: 思源笔记的 API 方法实现
-└─main.py: 文件上传助手
+└─uploader.py: 文件上传助手
 ```
