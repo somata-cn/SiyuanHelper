@@ -18,6 +18,7 @@ from sys import exit as broken
 from loguru import logger
 from api import Siyuan
 from config import URL, TOKEN, VERIFY
+from urllib3 import disable_warnings
 
 USAGE = """文件上传助手, 请在 config.py 配置基础信息
 usage: python3 ./uploader.py <FILE[ FILE...]>
@@ -78,7 +79,7 @@ def main():
         print(USAGE)
         broken(129)
 
-    siyuan = Siyuan(URL, TOKEN, VERIFY)
+    siyuan = Siyuan(URL, TOKEN)
     target_notebook_id = choose_notebook(siyuan)
 
     for file in argv[1:]:
@@ -89,4 +90,6 @@ def main():
 if __name__ == "__main__":
     logger.remove()
     logger.add(stderr, level='INFO')
+    if not VERIFY:
+        disable_warnings()
     main()

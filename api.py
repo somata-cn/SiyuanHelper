@@ -20,10 +20,9 @@ class Siyuan:
     仅实现了思源助手相关 API, 其余未使用到的暂未编写
     """
 
-    def __init__(self, url: str, token: str, verify: bool = True):
+    def __init__(self, url: str, token: str):
         self.session = requests.Session()
         self.session.headers["Authorization"] = f"Token {token}"
-        self.session.verify = verify
         self.url = url
 
     def ls_notebooks(self) -> list:

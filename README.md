@@ -16,10 +16,11 @@
    ```python
    URL = r"http://localhost:6806"
    TOKEN = r"your token"
+   VERIFY = True
    ```
 3. 运行程序
    ```shell
-   python uploader.py "文件路径"
+   python uploader.py "FILE" ["FILE"...]
    ```
 
 
@@ -27,5 +28,6 @@
 ```
 SiyuanHelper
 ├─api.py: 思源笔记的 API 方法实现
+├─config.py: 脚本配置文件
 └─uploader.py: 文件上传助手
 ```
