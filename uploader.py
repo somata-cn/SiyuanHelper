@@ -6,19 +6,23 @@ file: /uploader.py
 author: somata
 e-mail: somata@foxmail.com
 license: Apache 2.0
-date: 2023-7-31
+date: 2023-9-21
 """
 
 
 import re
+from os.path import basename, dirname
 from os.path import join as pathjoin
-from os.path import basename, normcase, dirname
-from sys import argv,stderr
+from os.path import normcase
+from sys import argv
 from sys import exit as broken
+from sys import stderr
+
 from loguru import logger
-from api import Siyuan
-from config import URL, TOKEN, VERIFY
 from urllib3 import disable_warnings
+
+from api import Siyuan
+from config import TOKEN, URL, VERIFY
 
 USAGE = """文件上传助手, 请在 config.py 配置基础信息
 usage: python3 ./uploader.py <FILE[ FILE...]>
@@ -84,7 +88,6 @@ def main():
 
     for file in argv[1:]:
         upload_note(siyuan, target_notebook_id, file)
-
 
 
 if __name__ == "__main__":

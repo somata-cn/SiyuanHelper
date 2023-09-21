@@ -6,12 +6,14 @@ file: /api.py
 author: somata
 e-mail: somata@foxmail.com
 license: Apache 2.0
-date: 2023-7-17
+date: 2023-9-21
 """
 
 from urllib.parse import urljoin
+
 import requests
 from loguru import logger
+
 from errors import CodeError, StatusError
 
 
