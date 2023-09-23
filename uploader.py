@@ -19,7 +19,6 @@ from sys import exit as broken
 from sys import stderr
 
 from loguru import logger
-from urllib3 import disable_warnings
 
 from api import Siyuan
 from config import TOKEN, URL, VERIFY
@@ -79,20 +78,21 @@ def upload_note(siyuan: Siyuan, notebook: str, markdown_file: str) -> bool:
 def main():
     """主函数
     """
-    if len(argv) <= 2:
+    if len(argv) <= 1:
         print(USAGE)
         broken(129)
 
-    siyuan = Siyuan(URL, TOKEN)
+    siyuan = Siyuan(URL, TOKEN, VERIFY)
     target_notebook_id = choose_notebook(siyuan)
 
     for file in argv[1:]:
-        upload_note(siyuan, target_notebook_id, file)
+        if file.endswith(".md"):
+            upload_note(siyuan, target_notebook_id, file)
+        else:
+            logger.warning("please input a markdown-type file.")
 
 
 if __name__ == "__main__":
     logger.remove()
     logger.add(stderr, level='INFO')
-    if not VERIFY:
-        disable_warnings()
     main()

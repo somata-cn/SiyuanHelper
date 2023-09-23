@@ -13,6 +13,8 @@ from urllib.parse import urljoin
 
 import requests
 from loguru import logger
+from urllib3 import disable_warnings
+from urllib3.exceptions import InsecureRequestWarning
 
 from errors import CodeError, StatusError
 
@@ -22,10 +24,14 @@ class Siyuan:
     仅实现了思源助手相关 API, 其余未使用到的暂未编写
     """
 
-    def __init__(self, url: str, token: str):
+    def __init__(self, url: str, token: str, verify: bool = True):
         self.session = requests.Session()
         self.session.headers["Authorization"] = f"Token {token}"
+        self.session.verify = verify
         self.url = url
+
+        if not verify:
+            disable_warnings(InsecureRequestWarning)
 
     def ls_notebooks(self) -> list:
         """列出所有笔记本
@@ -77,6 +83,7 @@ class Siyuan:
         if response['data']['errFiles']:
             logger.warning("err file", response['data']['errFiles'])
 
+        files['file[]'].close()
         for path in response['data']['succMap'].values():
             return path
 
