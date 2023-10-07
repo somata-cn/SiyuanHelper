@@ -24,11 +24,18 @@ class Siyuan:
     仅实现了思源助手相关 API, 其余未使用到的暂未编写
     """
 
-    def __init__(self, url: str, token: str, verify: bool = True):
+    def __init__(self, url: str, token: str, verify: bool = True, dry_run: bool = False):
+        """初始化
+
+        :arg url: 思源笔记的基地址  e.g. http://localhost:6806/
+        :arg verify: 是否验证 TLS 证书
+        :arg dry_run: 不发送实际请求
+        """
         self.session = requests.Session()
         self.session.headers["Authorization"] = f"Token {token}"
         self.session.verify = verify
         self.url = url
+        self.dry_run = dry_run
 
         if not verify:
             disable_warnings(InsecureRequestWarning)
@@ -39,6 +46,9 @@ class Siyuan:
         :returns: 返回`名称-ID`键值对格式的数据
         :rtype: [(name, id), ...]
         """
+        if self.dry_run:
+            return [('思源笔记用户指南', '20210808180117-czj9bvb'), ('测试笔记本', '20210817205410-2kvfpfn')]
+
         request_url = urljoin(self.url, "/api/notebook/lsNotebooks")
         logger.debug(f"request url {request_url}")
 
@@ -64,6 +74,9 @@ class Siyuan:
         :param file: 本地资源路径，需要传入绝对路径。
         :returns: 服务端文件资源路径
         """
+        if self.dry_run:
+            return 'assets/foo-20210719092549-9j5y79r.png'
+
         request_url = urljoin(self.url, "/api/asset/upload")
         logger.debug(f"request url {request_url}")
 
@@ -84,12 +97,14 @@ class Siyuan:
             logger.warning("err file", response['data']['errFiles'])
 
         files['file[]'].close()
-        for path in response['data']['succMap'].values():
-            return path
+        return response['data']['succMap'].values()[0]
 
     def get_unused_assets(self) -> list:
         """列出所有未使用资源
         """
+        if self.dry_run:
+            return ['assets/foo-20210719092549-9j5y79r.png', 'assets/image-20230719092549-9j4mcgt.png']
+
         request_url = urljoin(self.url, "/api/asset/getUnusedAssets")
         logger.debug(f"request url {request_url}")
 
@@ -110,6 +125,9 @@ class Siyuan:
 
         :returns: 已删除的文件列表
         """
+        if self.dry_run:
+            return ['assets/foo-20210719092549-9j5y79r.png', 'assets/image-20230719092549-9j4mcgt.png']
+
         request_url = urljoin(self.url, "/api/asset/removeUnusedAssets")
         logger.debug(f"request url {request_url}")
 
@@ -134,6 +152,9 @@ class Siyuan:
         :param markdown: Markdown格式的文档(要先把 Markdown 中的图像上传至 assets 目录下)
         :returns: 新建文档的ID
         """
+        if self.dry_run:
+            return '20210914223645-oj2vnx2'
+
         request_url = urljoin(self.url, "/api/filetree/createDocWithMd")
         logger.debug(f"request url {request_url}")
 

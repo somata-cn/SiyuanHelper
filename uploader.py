@@ -66,12 +66,22 @@ def upload_note(siyuan: Siyuan, notebook: str, markdown_file: str) -> bool:
 
         markdown = markdown.replace(matched_str, f"![{desc}]({server_path})")
 
+    document_name = basename(markdown_file).replace(".md", "")
+    title_pattern = re.compile(rf"^# {document_name}\n")
+    markdown = title_pattern.sub("", markdown)
+
     # 上传Markdown
-    document_name = basename(markdown_file)
     document_id = siyuan.create_markdown_document(
         notebook, document_name, markdown)
     logger.info(f"uploaded document id: {document_id}")
     return True
+
+
+def parse_args():
+    """
+    TOTO: 解析命令行参数
+    """
+    raise NotImplementedError
 
 
 @logger.catch
@@ -82,7 +92,7 @@ def main():
         print(USAGE)
         broken(129)
 
-    siyuan = Siyuan(URL, TOKEN, VERIFY)
+    siyuan = Siyuan(URL, TOKEN, VERIFY, True)
     target_notebook_id = choose_notebook(siyuan)
 
     for file in argv[1:]:
