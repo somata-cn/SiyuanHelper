@@ -1,33 +1,26 @@
 # SiyuanHelper
 
-一个简易的Markdown文档上传工具，思源笔记专用。
-
-编写这个程序的原因：我一直使用的都是思源 Docker 镜像，但是在Web操作并不能直接导入本地Markdown格式的文件，所以这里编写了一个上传助手。
+a simple SiYuan notes management tool, the core of this tool is to upload your markdown-type files to server.
 
 
-使用方法:
-1. 安装依赖, 推荐使用 [pdm](https://github.com/pdm-project/pdm) 项目管理
+usage:
+1. Installation dependencies, recommand using [pdm](https://github.com/pdm-project/pdm) to manage your project.
     ```shell
     pdm install
     # or
     pip install requests loguru
     ```
-2. 创建`config.py`, 并编写配置文件
-   ```python
-   URL = r"http://localhost:6806"
-   TOKEN = r"your token"
-   VERIFY = True
-   ```
-3. 运行程序
+2. running program
    ```shell
-   python uploader.py "FILE" ["FILE"...]
+   python uploader.py --help
+   python uploader.py -u 'http://localhost:4343/' -t '123456' -i 'PATHTOYOUR.md'
    ```
 
 
-文件内容摘要:
+summary:
 ```
 SiyuanHelper
-├─api.py: 思源笔记的 API 方法实现
-├─config.py: 脚本配置文件
-└─uploader.py: 文件上传助手
+├─api.py: SiYuan API implement
+├─argparser.py: command line args parser
+└─uploader.py: file uploader
 ```

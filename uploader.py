@@ -6,22 +6,19 @@ file: /uploader.py
 author: somata
 e-mail: somata@foxmail.com
 license: Apache 2.0
-date: 2023-9-21
+date: 2023-10-7
 """
-
 
 import re
 from os.path import basename, dirname
 from os.path import join as pathjoin
 from os.path import normcase
-from sys import argv
-from sys import exit as broken
 from sys import stderr
 
 from loguru import logger
+from argparser import uploader_parser
 
 from api import Siyuan
-from config import TOKEN, URL, VERIFY
 
 USAGE = """文件上传助手, 请在 config.py 配置基础信息
 usage: python3 ./uploader.py <FILE[ FILE...]>
@@ -45,27 +42,35 @@ def upload_note(siyuan: Siyuan, notebook: str, markdown_file: str) -> bool:
     :arg notebook: 笔记本ID
     :arg markdown_file: 笔记路径
     """
-    with open(markdown_file, mode='r', encoding='utf-8') as file_pointer:
-        markdown = file_pointer.read()
+    try:
+        with open(markdown_file, mode='r', encoding='utf-8') as file_pointer:
+            markdown = file_pointer.read()
+    except FileNotFoundError:
+        logger.error(f"{markdown_file} file not found")
+        return False
 
     # 查找markdown中的本地图像, 上传, 替换路径
     img_pattern = re.compile(r"!\[(.*?)\]\((.*)\)")
     net_pattern = re.compile(r"^https?:\/\/")
+
+    # TODO: 相同文件去重
     for match in img_pattern.finditer(markdown):
         matched_str = match.group(0)
         desc, path = match.group(1, 2)
         logger.debug(f"match resource {path}")
+
         # 判断资源是否为本地路径
         if net_pattern.match(path):
             logger.debug(f"network resource {path}")
             continue
-        path = normcase(pathjoin(dirname(markdown_file), path))
 
+        path = normcase(pathjoin(dirname(markdown_file), path))
         server_path = siyuan.upload_asset(path)
         logger.info(f"upload file {path} success")
 
         markdown = markdown.replace(matched_str, f"![{desc}]({server_path})")
 
+        # 替换文档名称
     document_name = basename(markdown_file).replace(".md", "")
     title_pattern = re.compile(rf"^# {document_name}\n")
     markdown = title_pattern.sub("", markdown)
@@ -77,25 +82,25 @@ def upload_note(siyuan: Siyuan, notebook: str, markdown_file: str) -> bool:
     return True
 
 
-def parse_args():
-    """
-    TOTO: 解析命令行参数
-    """
-    raise NotImplementedError
-
-
 @logger.catch
 def main():
     """主函数
     """
-    if len(argv) <= 1:
-        print(USAGE)
-        broken(129)
+    args = uploader_parser()
 
-    siyuan = Siyuan(URL, TOKEN, VERIFY, True)
-    target_notebook_id = choose_notebook(siyuan)
+    logger.remove()
+    logger.add(stderr, level=args.log_level)
 
-    for file in argv[1:]:
+    siyuan = Siyuan(args.url, args.token, args.verify, args.dry_run)
+
+    # 交互式获取笔记本 ID
+    if args.interactive:
+        target_notebook_id = choose_notebook(siyuan)
+    else:
+        target_notebook_id = args.notebook_id
+
+    # 开始上传文件
+    for file in args.files:
         if file.endswith(".md"):
             upload_note(siyuan, target_notebook_id, file)
         else:
@@ -103,6 +108,4 @@ def main():
 
 
 if __name__ == "__main__":
-    logger.remove()
-    logger.add(stderr, level='INFO')
     main()
