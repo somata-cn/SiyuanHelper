@@ -31,12 +31,14 @@ def root_parser() -> ArgumentParser:
 
     parser.add_argument('--version',
                         action='store_true', help="print the program version information")
-    parser.add_argument('-l', '--log-level',
-                        default='INFO', help="define the loguru level",
-                        choices=["TRACE", "DEBUG", "INFO", "SUCCESS",
-                                 "WARNING",  "ERROR", "CRITICAL"])
-    parser.add_argument('-v', '--verbose',
-                        action='store_true', help="print the detail information. eq -l TRACE")
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-l', '--log-level',
+                       default='INFO', help="define the loguru level",
+                       choices=["TRACE", "DEBUG", "INFO", "SUCCESS",
+                                "WARNING",  "ERROR", "CRITICAL"])
+    group.add_argument('-v', '--verbose',
+                       action='store_true', help="print the detail information. eq -l TRACE")
 
     return parser
 

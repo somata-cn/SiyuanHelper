@@ -105,9 +105,9 @@ def main():
 
     logger.remove()
     if args.verbose:
-        logger.add(stderr, level=args.log_level)
-    else:
         logger.add(stderr, level='TRACE')
+    else:
+        logger.add(stderr, level=args.log_level)
 
     logger.debug(args)
 
