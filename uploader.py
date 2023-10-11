@@ -23,16 +23,28 @@ from api import Siyuan
 USAGE = """文件上传助手, 请在 config.py 配置基础信息
 usage: python3 ./uploader.py <FILE[ FILE...]>
 """
+VERSION = "v0.3.0"
 
 
 def choose_notebook(siyuan: Siyuan) -> str:
     """交互式选择一个笔记本"""
     notebooks = siyuan.ls_notebooks()
-    i = 0
-    for notebook in notebooks:
-        print(f"[{i}] - \"{notebook[0]}\"")
-        i += 1
-    target_notebook_id = notebooks[int(input("请选择笔记本:"))][1]
+
+    for i, notebook in enumerate(notebooks):
+        print(f"[{i}] - \"{notebook[0]}\" [{notebook[1]}]")
+
+    try:
+        target_notebook_id = notebooks[int(input("请选择笔记本:"))][1]
+    except KeyboardInterrupt:
+        logger.debug('user interrupted the program')
+        exit(1)
+    except ValueError:
+        logger.error('please enter a number in the correct format')
+        exit(129)
+    except IndexError:
+        logger.error('Please enter a value within the correct range')
+        exit(129)
+
     logger.debug(f"target notebook id: {target_notebook_id}")
     return target_notebook_id
 
@@ -53,7 +65,6 @@ def upload_note(siyuan: Siyuan, notebook: str, markdown_file: str) -> bool:
     img_pattern = re.compile(r"!\[(.*?)\]\((.*)\)")
     net_pattern = re.compile(r"^https?:\/\/")
 
-    # TODO: 相同文件去重
     for match in img_pattern.finditer(markdown):
         matched_str = match.group(0)
         desc, path = match.group(1, 2)
@@ -70,7 +81,7 @@ def upload_note(siyuan: Siyuan, notebook: str, markdown_file: str) -> bool:
 
         markdown = markdown.replace(matched_str, f"![{desc}]({server_path})")
 
-        # 替换文档名称
+    # 替换文档名称
     document_name = basename(markdown_file).replace(".md", "")
     title_pattern = re.compile(rf"^# {document_name}\n")
     markdown = title_pattern.sub("", markdown)
@@ -88,16 +99,26 @@ def main():
     """
     args = uploader_parser()
 
+    if args.version:
+        print(f"SiYuan uploader {VERSION}")
+        exit(0)
+
     logger.remove()
-    logger.add(stderr, level=args.log_level)
+    if args.verbose:
+        logger.add(stderr, level=args.log_level)
+    else:
+        logger.add(stderr, level='TRACE')
+
+    logger.debug(args)
 
     siyuan = Siyuan(args.url, args.token, args.verify, args.dry_run)
 
     # 交互式获取笔记本 ID
-    if args.interactive:
-        target_notebook_id = choose_notebook(siyuan)
-    else:
+    target_notebook_id = ''
+    if args.notebook_id:
         target_notebook_id = args.notebook_id
+    elif args.interactive or not args.notebook_id:
+        target_notebook_id = choose_notebook(siyuan)
 
     # 开始上传文件
     for file in args.files:

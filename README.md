@@ -11,10 +11,18 @@ usage:
     pip install requests loguru
     ```
 2. running program
-   ```shell
-   python uploader.py --help
-   python uploader.py -u 'http://localhost:4343/' -t '123456' -i 'PATHTOYOUR.md'
-   ```
+    ```shell
+    python uploader.py --help
+    python uploader.py -u 'http://localhost:4343/' -t '123456' -i 'PATHTOYOUR.md'
+    ```
+3. command line argument file(optional), Input parameters in behavioral units. the file name is `args.txt`. see examples for usage
+    ```
+    -u
+    http://localhost:6806/
+    -t
+    123456
+    -i
+    ```
 
 
 summary:
@@ -22,5 +30,7 @@ summary:
 SiyuanHelper
 ├─api.py: SiYuan API implement
 ├─argparser.py: command line args parser
+├─args.txt: command line argument file
+├─errors.py: all error types
 └─uploader.py: file uploader
 ```
