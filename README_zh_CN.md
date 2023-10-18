@@ -10,7 +10,7 @@
     ```shell
     pdm install
     # or
-    pip install requests loguru
+    pip install requests loguru pillow
     ```
 2. 运行程序
     ```shell

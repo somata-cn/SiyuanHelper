@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# pylint: disable=C0116
+# pylint: disable=C0116,E1101
 
 """参数解析器
 1. 支持从命令行和文件中解析参数
@@ -16,6 +16,8 @@ date: 2023-10-11
 import os
 from sys import argv
 from argparse import ArgumentParser, Namespace
+
+import uploader
 
 
 def root_parser() -> ArgumentParser:
@@ -45,6 +47,9 @@ def root_parser() -> ArgumentParser:
 
 def uploader_argument(parser: ArgumentParser):
     parser.add_argument('files', metavar='FILE', nargs='*')
+
+    parser.add_argument('-c', '--convert', action='store_true',
+                        help="Convert image files to webp format")
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-n', '--notebook-id',
@@ -81,6 +86,7 @@ def helper_parser():
     sub_parser = sub_args.add_parser(
         'upload', help="upload your markdown-type file")
     uploader_argument(sub_parser)
+    sub_parser.set_defaults(func=uploader.run)
 
     sub_parser = sub_args.add_parser('notebook', help="manage your notebooks")
     notebook_argument(sub_parser)

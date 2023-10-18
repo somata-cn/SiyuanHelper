@@ -97,7 +97,7 @@ class Siyuan:
             logger.warning("err file", response['data']['errFiles'])
 
         files['file[]'].close()
-        return response['data']['succMap'].values()[0]
+        return list(response['data']['succMap'].values())[0]
 
     def get_unused_assets(self) -> list:
         """列出所有未使用资源
